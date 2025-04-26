@@ -11,33 +11,53 @@ const winCombos = [
   [0,4,8], [2,4,6]
 ];
 
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(screen => {
+    screen.style.display = 'none';
+  });
+  document.getElementById(screenId).style.display = 'block';
+}
+
 function setFirstPlayer(symbol) {
   humanPlayer = symbol;
   aiPlayer = symbol === 'X' ? 'O' : 'X';
   currentPlayer = 'X';
-  restartGame();
-  if (humanPlayer === 'O') aiMove();
+  showScreen('difficulty-select');
 }
 
-function restartGame() {
+function setDifficulty(level) {
+  difficulty = level;
+  showScreen('game-screen');
+  startNewGame();
+}
+
+function startNewGame() {
   board.fill(null);
   gameOver = false;
   currentPlayer = 'X';
   document.getElementById("status").textContent = '';
   renderBoard();
-  if (humanPlayer === 'O') aiMove();
+  if (humanPlayer === 'O') {
+    setTimeout(aiMove, 500);
+  }
+}
+
+function restartGame() {
+  startNewGame();
 }
 
 function giveUp() {
   if (!gameOver) {
     gameOver = true;
     document.getElementById("status").textContent = `${aiPlayer} wins! (You gave up)`;
+    setTimeout(() => {
+      showScreen('player-select');
+      board.fill(null);
+      gameOver = false;
+      currentPlayer = 'X';
+      document.getElementById("status").textContent = '';
+    }, 2500);
   }
-}
-
-function setDifficulty(level) {
-  difficulty = level;
-  restartGame();
 }
 
 function renderBoard() {
@@ -46,68 +66,99 @@ function renderBoard() {
   board.forEach((val, i) => {
     const cell = document.createElement('div');
     cell.className = 'cell';
-    cell.textContent = val || '';
+    if (val) {
+      cell.textContent = val;
+      cell.classList.add(val.toLowerCase());
+    }
     cell.onclick = () => handleMove(i);
     boardEl.appendChild(cell);
   });
 }
 
 function handleMove(index) {
-  if (gameOver || board[index]) return;
-  if (currentPlayer === humanPlayer) {
-    board[index] = humanPlayer;
-    if (checkWin(humanPlayer)) return endGame(humanPlayer);
-    if (isDraw()) return endGame(null);
-    currentPlayer = aiPlayer;
-    setTimeout(aiMove, 300);
+  if (gameOver || board[index] || currentPlayer !== humanPlayer) return;
+  
+  makeMove(index, humanPlayer);
+  
+  if (checkWin(humanPlayer)) {
+    endGame(humanPlayer);
+    return;
   }
+  if (isDraw()) {
+    endGame(null);
+    return;
+  }
+  
+  currentPlayer = aiPlayer;
+  setTimeout(aiMove, 500);
+}
+
+function makeMove(index, player) {
+  board[index] = player;
+  renderBoard();
 }
 
 function aiMove() {
   if (gameOver) return;
+  
   const move = bestMove();
-  board[move] = aiPlayer;
-  if (checkWin(aiPlayer)) return endGame(aiPlayer);
-  if (isDraw()) return endGame(null);
+  makeMove(move, aiPlayer);
+  
+  if (checkWin(aiPlayer)) {
+    endGame(aiPlayer);
+    return;
+  }
+  if (isDraw()) {
+    endGame(null);
+    return;
+  }
+  
   currentPlayer = humanPlayer;
-  renderBoard();
 }
 
 function bestMove() {
   const available = board.map((val, i) => val === null ? i : null).filter(v => v !== null);
+  
+  // Completely random move
   if (difficulty === 'easy') {
     return available[Math.floor(Math.random() * available.length)];
   }
+  
+  // 50% chance of best move, 50% chance of random move
   if (difficulty === 'medium' && Math.random() < 0.5) {
     return available[Math.floor(Math.random() * available.length)];
   }
-  return minimax(board, aiPlayer).index;
+  
+  // Always best move
+  return minimax(board.slice(), aiPlayer, 0).index;
 }
 
-function minimax(newBoard, player) {
+function minimax(newBoard, player, depth) {
   const availSpots = newBoard.map((val, i) => val === null ? i : null).filter(v => v !== null);
-  if (checkWin(humanPlayer, newBoard)) return { score: -10 };
-  if (checkWin(aiPlayer, newBoard)) return { score: 10 };
+  
+  if (checkWin(humanPlayer, newBoard)) return { score: -10 + depth };
+  if (checkWin(aiPlayer, newBoard)) return { score: 10 - depth };
   if (availSpots.length === 0) return { score: 0 };
-
+  
   const moves = [];
+  
   for (let i of availSpots) {
-    let move = { index: i };
+    const move = { index: i };
     newBoard[i] = player;
-
+    
     if (player === aiPlayer) {
-      move.score = minimax(newBoard, humanPlayer).score;
+      move.score = minimax(newBoard, humanPlayer, depth + 1).score;
     } else {
-      move.score = minimax(newBoard, aiPlayer).score;
+      move.score = minimax(newBoard, aiPlayer, depth + 1).score;
     }
-
+    
     newBoard[i] = null;
     moves.push(move);
   }
-
-  return (player === aiPlayer)
-    ? moves.reduce((best, m) => m.score > best.score ? m : best)
-    : moves.reduce((best, m) => m.score < best.score ? m : best);
+  
+  return player === aiPlayer
+    ? moves.reduce((best, move) => move.score > best.score ? move : best)
+    : moves.reduce((best, move) => move.score < best.score ? move : best);
 }
 
 function checkWin(player, customBoard = board) {
@@ -123,8 +174,15 @@ function isDraw() {
 function endGame(winner) {
   gameOver = true;
   renderBoard();
-  document.getElementById("status").textContent =
-    winner ? `${winner} wins!` : "It's a draw!";
+  const status = document.getElementById("status");
+  if (winner) {
+    status.textContent = `${winner} wins!`;
+    status.className = winner.toLowerCase();
+  } else {
+    status.textContent = "It's a draw!";
+    status.className = '';
+  }
 }
 
-renderBoard();
+showScreen('player-select');
+//TODO: Fix give up button to redirect to beginning when already in a lost/won
