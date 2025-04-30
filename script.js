@@ -35,7 +35,10 @@ function startNewGame() {
   board.fill(null);
   gameOver = false;
   currentPlayer = 'X';
-  document.getElementById("status").textContent = '';
+  const status = document.getElementById("status");
+  status.textContent = '';
+  status.className = '';
+  document.querySelector('button[onclick="giveUp()"]').textContent = 'Give Up';
   renderBoard();
   if (humanPlayer === 'O') {
     setTimeout(aiMove, 500);
@@ -47,17 +50,29 @@ function restartGame() {
 }
 
 function giveUp() {
-  if (!gameOver) {
-    gameOver = true;
-    document.getElementById("status").textContent = `${aiPlayer} wins! (You gave up)`;
-    setTimeout(() => {
-      showScreen('player-select');
-      board.fill(null);
-      gameOver = false;
-      currentPlayer = 'X';
-      document.getElementById("status").textContent = '';
-    }, 2500);
+  if (gameOver) {
+    showScreen('player-select');
+    board.fill(null);
+    gameOver = false;
+    currentPlayer = 'X';
+    const status = document.getElementById("status");
+    status.textContent = '';
+    status.className = '';
+    return;
   }
+  
+  gameOver = true;
+  const status = document.getElementById("status");
+  status.textContent = `${aiPlayer} wins! (You gave up)`;
+  status.className = aiPlayer.toLowerCase();
+  setTimeout(() => {
+    showScreen('player-select');
+    board.fill(null);
+    gameOver = false;
+    currentPlayer = 'X';
+    status.textContent = '';
+    status.className = '';
+  }, 2500);
 }
 
 function renderBoard() {
@@ -182,6 +197,7 @@ function endGame(winner) {
     status.textContent = "It's a draw!";
     status.className = '';
   }
+  document.querySelector('button[onclick="giveUp()"]').textContent = 'Restart';
 }
 
 showScreen('player-select');
