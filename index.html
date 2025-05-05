@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tic-Tac-Toe</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <h1>Tic-Tac-Toe</h1>
-  
-  <div id="player-select" class="screen">
-    <h2>Choose Your Symbol</h2>
-    <div class="controls">
-      <button onclick="setFirstPlayer('X')">Play as X</button>
-      <button onclick="setFirstPlayer('O')">Play as O</button>
-    </div>
-  </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tic-Tac-Toe</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1>Tic-Tac-Toe</h1>
 
-  <div id="difficulty-select" class="screen" style="display: none;">
-    <h2>Select Difficulty</h2>
-    <div class="controls">
-      <button onclick="setDifficulty('easy')">Easy</button>
-      <button onclick="setDifficulty('medium')">Medium</button>
-      <button onclick="setDifficulty('Impossible')">Impossible</button>
-    </div>
-  </div>
+        <div id="player-select" class="screen">
+            <h2>Choose Your Symbol</h2>
+            <div class="controls">
+                <button onclick="setFirstPlayer('X')">Play as X</button>
+                <button onclick="setFirstPlayer('O')">Play as O</button>
+            </div>
+        </div>
 
-  <div id="game-screen" class="screen" style="display: none;">
-    <div class="controls">
-      <button onclick="restartGame()">Play Again</button>
-      <button onclick="giveUp()">Give Up</button>
-    </div>
-    <div id="board" class="board"></div>
-    <p id="status"></p>
-  </div>
+        <div id="difficulty-select" class="screen" style="display: none;">
+            <h2>Select Difficulty</h2>
+            <div class="controls">
+                <button onclick="setDifficulty('easy')">Easy</button>
+                <button onclick="setDifficulty('medium')">Medium</button>
+                <button onclick="setDifficulty('Impossible')">
+                    Impossible
+                </button>
+            </div>
+        </div>
 
-  <script src="script.js"></script>
-</body>
+        <div id="game-screen" class="screen" style="display: none;">
+            <div class="controls">
+                <button onclick="restartGame()">Play Again</button>
+                <button onclick="giveUp()">Give Up</button>
+            </div>
+            <div id="board" class="board"></div>
+            <p id="status"></p>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
 </html>
