@@ -17,3 +17,4 @@ A interactive Tic-Tac-Toe game built with HTML, CSS, and JavaScript. Play agains
 - Minimax Algorithm for AI decision making
 
 # Play Here:
+https://totevm.github.io/Tic-Tac-Toe/
