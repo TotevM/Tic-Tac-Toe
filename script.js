@@ -22,7 +22,6 @@ function showScreen(screenId) {
     });
     const targetScreen = document.getElementById(screenId);
     targetScreen.style.display = 'block';
-    // Trigger reflow to enable animation
     void targetScreen.offsetWidth;
     targetScreen.style.transform = 'translateY(0)';
     targetScreen.style.opacity = '1';
@@ -72,7 +71,6 @@ function giveUp() {
         return;
     }
 
-    // Disable the give up button
     const giveUpButton = document.querySelector('button[onclick="giveUp()"]');
     giveUpButton.disabled = true;
     giveUpButton.style.opacity = '0.5';
@@ -81,22 +79,18 @@ function giveUp() {
     gameOver = true;
     const status = document.getElementById('status');
 
-    // Show winning state
     status.textContent = `${aiPlayer} wins!`;
     status.className = aiPlayer.toLowerCase();
 
-    // Highlight all cells as winning combination
     const cells = document.querySelectorAll('.cell');
     cells.forEach((cell) => {
         cell.classList.add('winner');
     });
 
-    // Show status with animation
     setTimeout(() => {
         status.classList.add('show');
     }, 100);
 
-    // Wait longer before resetting to show the winning state
     setTimeout(() => {
         showScreen('player-select');
         board.fill(null);
@@ -104,11 +98,10 @@ function giveUp() {
         currentPlayer = 'X';
         status.textContent = '';
         status.className = '';
-        // Re-enable the button when returning to player select
         giveUpButton.disabled = false;
         giveUpButton.style.opacity = '1';
         giveUpButton.style.cursor = 'pointer';
-    }, 3000); // Increased from 2500 to 3000 to show winning state longer
+    }, 3000);
 }
 
 function renderBoard() {
@@ -120,7 +113,6 @@ function renderBoard() {
         cell.className = 'cell';
         if (val) {
             cell.classList.add(val.toLowerCase());
-            // Only add animation class if this is a new move
             if (!oldBoard[i] || !oldBoard[i].includes(val.toLowerCase())) {
                 cell.classList.add('animate');
             }
@@ -237,7 +229,6 @@ function endGame(winner) {
     if (winner) {
         status.textContent = `${winner} wins!`;
         status.className = winner.toLowerCase();
-        // Highlight winning combination
         const winningCombo = winCombos.find((combo) =>
             combo.every((i) => board[i] === winner)
         );
@@ -253,13 +244,11 @@ function endGame(winner) {
         status.textContent = "It's a draw!";
         status.className = '';
     }
-    // Show status with animation
     setTimeout(() => {
         status.classList.add('show');
     }, 100);
     document.querySelector('button[onclick="giveUp()"]').textContent =
-        'Restart';
+        'Change Difficulty';
 }
 
-// Initialize the game
 showScreen('player-select');
