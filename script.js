@@ -1,3 +1,20 @@
+/**
+ * Minimax algorithm implementation for optimal AI moves
+ * @param {Array} board - Current board state
+ * @param {number} depth - Current depth in game tree
+ * @param {boolean} isMaximizing - True if maximizing player (AI)
+ * @param {number} alpha - Alpha value for pruning
+ * @param {number} beta - Beta value for pruning
+ * @returns {number} Best score for current position
+ *  
+ * The algorithm works by:
+ * 1. Checking if game is over (base case)
+ * 2. Recursively evaluating all possible moves
+ * 3. Choosing the move with best score for current player
+ * 4. Using alpha-beta pruning for optimization
+ */
+
+
 let board = Array(9).fill(null);
 let currentPlayer = 'X';
 let aiPlayer = 'O';
